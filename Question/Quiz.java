@@ -2,17 +2,17 @@
 package Question;
 
 //Imports declear
-import java.awt.event.ActionListener;
+import Gui.exitFrame;
+import Gui.mainFrame;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Scanner;
+import javax.swing.JLabel;
 
 public abstract class Quiz 
 {
-    private List<Question> questions;
-    private int totalCorrect;
+    private final List<Question> questions;
+    public int totalCorrect;
 
     public Quiz() 
     {
@@ -31,81 +31,34 @@ public abstract class Quiz
         }//End else
     }//End addQuestion()
     
-    public void giveQuiz() 
+    public void giveQuiz(JLabel cl1, JLabel cl2, JLabel cl3, JLabel cl4, JLabel ql, mainFrame mf) 
     {
-        Scanner myObj = new Scanner(System.in);
         totalCorrect = 0;
         
-        // Randomize questions list
         Collections.shuffle(questions);
         
         for (int i = 0; i < questions.size() - 15; i++) 
         {
             Question question = questions.get(i);
-            System.out.println("Question " + (i + 1) + ": " + question.getQuestion());
-            System.out.println("Possible Answers:");
+            ql.setText("Question " + (i + 1) + ": " + question.getQuestion());
             List<String> answers = question.getAnswers();
-            for (int j = 0; j < answers.size(); j++) 
-            {
-                System.out.println((char)('A' + j) + ": " + answers.get(j));
-            }//End for loop
+            
+            cl1.setText(answers.get(0));
+            cl2.setText(answers.get(1));
+            cl3.setText(answers.get(2));
+            cl4.setText(answers.get(3));
             
             System.out.println();
-            String choice = myObj.nextLine();
-            choice.toUpperCase();
-            char c = choice.charAt(0);
             Boolean[] answerTypes = question.getAnswerTypes();
+            mf.answers = answerTypes;
+            mf.answered = false;
             
-            switch (c) 
+            while(mf.answered == false)
             {
-                case 'A':
-                    if(answerTypes[0] == true)
-                    {
-                        totalCorrect += 1;
-                        System.out.println("Correct!");
-                    }//End if case A
-                    else
-                    {
-                        System.out.println("Wrong!");
-                    }//End else case A
-                    break;
-                case 'B':
-                    if(answerTypes[1] == true)
-                    {
-                        totalCorrect += 1;
-                        System.out.println("Correct!");
-                    }//End if case B
-                    else
-                    {
-                        System.out.println("Wrong!");
-                    }//End else case B
-                    break;
-                case 'C':
-                    if(answerTypes[2] == true)
-                    {
-                        totalCorrect += 1;
-                        System.out.println("Correct!");
-                    }//End if case C
-                    else
-                    {
-                        System.out.println("Wrong!");
-                    }//End else case C
-                    break;
-                case 'D':
-                    if(answerTypes[3] == true)
-                    {
-                        totalCorrect += 1;
-                        System.out.println("Correct!");
-                    }//End if case D
-                    else
-                    {
-                        System.out.println("Wrong!");
-                    }//End else case D
-                    break;
-                default:
-                System.out.println("Please choose A, B, C, or D");
-            }//End switch loop
+            }//End while loop
         }//End for loop
         System.out.println("Your total score is:" + totalCorrect); 
+        
+        exitFrame ef = new exitFrame();
     }//End giveQuiz()
 }//End Quiz

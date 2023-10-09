@@ -4,13 +4,12 @@ package Question;
 //Imports declear
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class Question 
 {
-    private String question;
-    private List<String> answers;
-    private Boolean[] answerTypes;
+    private final String question;
+    private final List<String> answers;
+    private final Boolean[] answerTypes;
 
     public Question(String question, Boolean[] answerType) 
     {
