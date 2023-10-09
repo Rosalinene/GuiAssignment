@@ -29,7 +29,7 @@ public class exitFrame
         jframe1.setDefaultCloseOperation(EXIT_ON_CLOSE);
         jframe1.setVisible(true);
         
-        label1 = new JLabel("Thank you for taking the quiz!");
+        label1 = new JLabel("Thank you for your time!");
         panel1.add(label1);
         jframe1.add(panel1);
     }//End exitFrame()
