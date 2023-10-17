@@ -1,202 +1,211 @@
-
+/*
+* @author Huong Pham
+ * Course: CSC 112-301 Fund of computing II
+ * Assignment: GuiAssignment1
+ * Description: Create a program with a GUI. Which gives a quiz.
+There should be a class called Question. This class should maintain the question, 4 possible answers, which answer is the correct choice.
+There should be a class called Quiz which has a list of 25 question objects. An there should be a Add method which adds a Question Object to the Quizz. The Quiz can be populated by main. A method called GiveQuiz which presents the question to the user in a text area component.
+The answer choices should be radio buttons. The Quiz will keep track of the number of question the user gets correct. Quiz should provide 10 random question from the list of 25.
+After the 10 questions it should display the user grade. There will need to be a button to start the quiz, and a button to submit the answer the user selects.
+The submit button should not be available until the quiz starts. The final grade can be displayed in a label on the form, should not just be on the screen the user should know what that number is.
+Looking for a good clean interface using layout managers.
+*/
 package Gui;
 
-import Question.Question;
-import Question.Quiz;
-import java.awt.Color;
-import java.awt.Dimension;
+//Imports declare
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import Question.Question;
+import Question.Quiz;
 import java.util.Collections;
-import java.util.List;
-import java.util.Random;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
-public final class mainFrame extends JPanel
+/**
+ *public class MainFrame  extends Frame 
+ * @author huong
+ */
+public class MainFrame  extends Frame 
 {
-    private final JFrame frame1;
-    private final JPanel panel2;
-    private final JButton A, B, C, D;
-    private final JLabel questionLabel, choiceLabel1, choiceLabel2, choiceLabel3, choiceLabel4, totalLabel;
-    public Boolean[] answers;
-    public int totalCorrect;
-    public Boolean answered;
-    public Quiz quiz;
-    public mainFrame thismf;
+    //Variables
+    private JPanel main_panel;
+    private JPanel question_panel;
+    private JPanel answer_panel;
+    private JPanel total_correct_panel;
+    private Quiz mquiz;
+    private JLabel question_label;
+    private JLabel total_correct_label;
+    private JLabel error_label;
+    private ButtonGroup button_group;
+    private JRadioButton a, b, c, d;
+    private JButton submit_button;
+    private int current_question_index;
+    private int current_answer;
+    private ArrayList<Question> questions;
     
-    public mainFrame()
+    private void setupPanel() 
     {
-        frame1 = new JFrame();
-        frame1.setTitle("Assignment 1 Quiz");
-        frame1.setSize(400,400);
-        frame1.setResizable(false);
-        frame1.setLocationRelativeTo(null);
-        frame1.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        frame1.setVisible(true);
+        main_panel = new JPanel(new FlowLayout());
+        question_panel = new JPanel(new FlowLayout());
+        answer_panel = new JPanel(new FlowLayout());
+        total_correct_panel = new JPanel(new FlowLayout());
         
-        questionLabel = new JLabel("Question");
-        choiceLabel1 = new JLabel("Choice A");
-        choiceLabel2 = new JLabel("Choice B");
-        choiceLabel3 = new JLabel("Choice C");
-        choiceLabel4 = new JLabel("Choice D");
-        totalLabel = new JLabel("");
-        
-        A = new JButton("A");
-        B = new JButton("B");
-        C = new JButton("C");
-        D = new JButton("D");
-        
-        mainFrame.ButtonListener listener = new mainFrame.ButtonListener();
-        A.addActionListener(listener);
-        B.addActionListener(listener);
-        C.addActionListener(listener);
-        D.addActionListener(listener);
-        
-        panel2 = new JPanel();
-        panel2.add(questionLabel);
-        panel2.add(choiceLabel1);
-        panel2.add(choiceLabel2);
-        panel2.add(choiceLabel3);
-        panel2.add(choiceLabel4);
-        panel2.add(totalLabel);
-        panel2.add(A);
-        panel2.add(B);
-        panel2.add(C);
-        panel2.add(D);
-        panel2.setBackground(Color.PINK);
-        panel2.setPreferredSize(new Dimension(200, 40));
-        
-        
-        frame1.add(panel2);
-        
-        quiz = new Quiz(){};
-        
-        this.populateQuiz(quiz);
-        totalCorrect = 0;
-        thismf = this;
-        
-        Runnable runnable = new MyRunnable();
-        Thread thread = new Thread(runnable);
-        thread.start();
-    }//End mainFrame
+        main_panel.setBackground(Color.PINK);
+        main_panel.setPreferredSize(new Dimension(200, 40));
+        question_panel.setBackground(Color.PINK);
+        answer_panel.setBackground(Color.PINK);
+        total_correct_panel.setBackground(Color.PINK);
+    }//End setupPanel()
     
-    public void populateQuiz(Quiz qz){
-    
-        // Generate 25 random questions with 4 random answers each
-        for (int i = 1; i <= 25; i++) 
+    private void setupQuestionLabel(String question) 
+    {
+        if (current_question_index >= questions.size()) 
         {
-            int x = getRandomNumber();
-            int y = getRandomNumber();
-            int answer = x+y;
+            question_label.setText("All questions answered!");
+            question_panel.add(question_label);
+            return;
+        }//End if loop
+        question_label.setText("Question " + (current_question_index+1) +": " + question);
+        question_panel.add(question_label);
+    }//End 
 
-            Integer[] intArray = { getRandomNumber(), answer, getRandomNumber(), getRandomNumber()};
-            Boolean[] answerArray = { false, false, false, false};            
-
-            List<Integer> intList = Arrays.asList(intArray);
-
-            Collections.shuffle(intList);
-            for (int n = 0; n < 4; n++)
-            {
-                if ((x + y == intList.get(n)))
-                {
-                    answerArray[n] = true;
-                }//End if
-                else 
-                {
-                    answerArray[n] = false;
-                }//End else
-            }//End for loop
-
-            Question question = new Question("What is " + x + " + " + y + "?", answerArray);
-            question.addAnswer("A. " + (intList.get(0)));
-            question.addAnswer("B. " + (intList.get(1)));
-            question.addAnswer("C. " + (intList.get(2)));
-            question.addAnswer("D. " + (intList.get(3)));
-            qz.addQuestion(question);
-        }//End for loop 
-    }//End populateQuiz
-    
-    private static int getRandomNumber() 
+    private void setupTotalCorrectLabel() 
     {
-        Random rand = new Random();
-        return rand.nextInt(10) + 1;
-    }//End getRandomNumber()  
-    
-    public class ButtonListener implements ActionListener
+        total_correct_label.setText("Total correct: " + mquiz.getTotalCorrect());
+        total_correct_panel.add(total_correct_label);
+    }//End setupQuestionLabel
+
+    private void loadQuestion() 
     {
-        @Override
-        public void actionPerformed(ActionEvent e) 
-        {           
-            if(e.getSource() == A)
-            {
-                if(answers[0] == true)
-                {
-                    System.out.println("That's a correct answer!");
-                    totalCorrect += 1;
-                }//End if case A
-                else
-                {
-                    System.out.println("Too bad, that's a wrong answer!");
-                }//End else case A
-                answered = true; 
-            }//End if
-            else if (e.getSource() == B)
-            {
-                if(answers[1] == true)
-                {
-                    System.out.println("That's a correct answer!");
-                    totalCorrect += 1;
-                }//End if case B
-                else
-                {
-                    System.out.println("Too bad, that's a wrong answer!");
-                }//End else case B
-                answered = true;
-            }//End else if
-            else if (e.getSource() == C)
-            {
-                if(answers[2] == true)
-                {
-                    System.out.println("That's a correct answer!");
-                    totalCorrect += 1;
-                }//End if case C
-                else
-                {
-                    System.out.println("Too bad, that's a wrong answer!");
-                }//End else case C
-                answered = true;
-            }//End else if
-            else if (e.getSource() == D)
-            {
-                if(answers[3] == true)
-                {
-                    System.out.println("That's a correct answer!");
-                    totalCorrect += 1;
-                }//End if case D
-                else
-                {
-                    System.out.println("Too bad, that's a wrong answer!");
-                }//End else case D
-                answered = true;
-            }//End else if
-            totalLabel.setText("Total Correct:" + totalCorrect);     
-        }//End actionPerformed
-    }//End ButtonListener
-    
-    // Implement the Runnable interface
-    public class MyRunnable implements Runnable 
-    {
-        @Override
-        public void run() 
+        answer_panel.removeAll();
+        System.out.println("current question index: " + current_question_index);
+        if (current_question_index >= questions.size()) 
         {
-            // Method to run in another thread
-               quiz.giveQuiz(choiceLabel1, choiceLabel2, choiceLabel3, choiceLabel4, questionLabel, thismf);
-        }//End run
-    }//End MyRunnable  
-}//End mainFrame
+            setupQuestionLabel(null);
+            setupTotalCorrectLabel();
+            frame.revalidate();
+            frame.repaint();
+            return;
+        }//End if loop
+        Question question = questions.get(current_question_index);
+        setupQuestionLabel(question.getQuestion());
+        setupAnswers(question.getOptions(), question.getAnswer());
+        setupTotalCorrectLabel();
+        frame.revalidate();
+        frame.repaint();
+    }//End loadQuestion()
 
+    private void setupAnswers(ArrayList<Integer> options, int right_answer) 
+    {
+        submit_button = new JButton("Submit");
+        Collections.shuffle(options);
+        a = new JRadioButton("A. " + options.get(0));
+        b = new JRadioButton("B. " + options.get(1));
+        c = new JRadioButton("C. " + options.get(2));
+        d = new JRadioButton("D. " + options.get(3));
+        
+        a.addActionListener(new ActionListener() 
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                current_answer = options.get(0);
+            } //End actionPerformed
+        });//End a.addActionListener
+
+        b.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                current_answer = options.get(1);
+            } //End actionPerformed
+        });//End b.addActionListener
+
+        c.addActionListener(new ActionListener() 
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                current_answer = options.get(2);
+            } //End actionPerformed
+        });//End c.addActionListener
+
+        d.addActionListener(new ActionListener() 
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                current_answer = options.get(3);
+            } //End actionPerformed
+        });//End d.addActionListener
+
+        submit_button.addActionListener(new ActionListener() 
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                System.out.println("Answer: " + current_answer + " Right answer: " + right_answer);
+                if (current_answer == -1)
+                {
+                    total_correct_panel.add(error_label);
+                    frame.revalidate();
+                    frame.repaint();
+                    return;
+                }//End if loop
+                else if (current_answer == right_answer) 
+                {
+                    mquiz.increaseTotalCorrect();   
+                } //End else if           
+                total_correct_panel.remove(error_label);
+                current_question_index++;
+                current_answer = -1;
+                loadQuestion();
+            }////End actionPerformed
+        });//End submit_button.addActionListener
+
+        //Add answers into panel and button group
+        button_group.add(a);
+        button_group.add(b);
+        button_group.add(c);
+        button_group.add(d);
+        answer_panel.add(a);
+        answer_panel.add(b);
+        answer_panel.add(c);
+        answer_panel.add(d);
+        answer_panel.add(submit_button);
+    }//End setupAnswers
+    
+    /**
+     *public MainFrame()
+     */
+    public MainFrame() 
+    {
+        mquiz = new Quiz();
+        question_label = new JLabel("Question: ");
+        error_label = new JLabel ("Error! Please choose your answer.");
+        total_correct_label = new JLabel("Total correct: ");
+        button_group = new ButtonGroup();
+        submit_button = new JButton("Submit");
+        current_question_index = 0;
+        current_answer = -1;
+        
+        this.setupFrame();
+        this.setupPanel();
+        main_panel.add(question_panel);
+        main_panel.add(answer_panel);
+        main_panel.add(total_correct_panel);
+        frame.add(main_panel); 
+        questions = mquiz.giveQuiz(10);
+        loadQuestion();
+    }//End constructor MainFrame() 
+}//End class MainFrame()

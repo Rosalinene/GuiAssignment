@@ -11,23 +11,34 @@ The submit button should not be available until the quiz starts. The final grade
 Looking for a good clean interface using layout managers.
 */
 
-package guiassignment1;
+package Gui;
 
 //Imports declare
-import Gui.*;
+import javax.swing.JFrame;
+import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
 /**
- *public class GuiAssignment1 
+ *public abstract class Frame 
  * @author huong
  */
-public class GuiAssignment1 
+public abstract class Frame 
 {
-    /**
-     *public static void main
-     * @param args
+    /*
+     * variable
      */
-    public static void main(String args[]) 
-    {   
-        StartFrame sFrame = new StartFrame();
-    }//End main
-}//End GuiAssignment1 
+
+    protected JFrame frame;
+
+    /*
+     *protected void setupFrame()
+     */
+    protected void setupFrame() 
+    {
+        frame = new JFrame("Quiz");
+        frame.setSize(400,400);
+        frame.setResizable(true);
+        frame.setLocationRelativeTo(null);
+        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }//End setupFrame()
+}//End Frame 

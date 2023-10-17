@@ -1,65 +1,102 @@
+/*
+* @author Huong Pham
+ * Course: CSC 112-301 Fund of computing II
+ * Assignment: GuiAssignment1
+ * Description: Create a program with a GUI. Which gives a quiz.
+There should be a class called Question. This class should maintain the question, 4 possible answers, which answer is the correct choice.
+There should be a class called Quiz which has a list of 25 question objects. An there should be a Add method which adds a Question Object to the Quizz. The Quiz can be populated by main. A method called GiveQuiz which presents the question to the user in a text area component.
+The answer choices should be radio buttons. The Quiz will keep track of the number of question the user gets correct. Quiz should provide 10 random question from the list of 25.
+After the 10 questions it should display the user grade. There will need to be a button to start the quiz, and a button to submit the answer the user selects.
+The submit button should not be available until the quiz starts. The final grade can be displayed in a label on the form, should not just be on the screen the user should know what that number is.
+Looking for a good clean interface using layout managers.
+*/
 
 package Gui;
 
 //Imports declare
-import java.awt.Color;
-import java.awt.Dimension;
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JButton;
-import javax.swing.JFrame;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import static javax.swing.WindowConstants.EXIT_ON_CLOSE;
 
-public class StartFrame extends JPanel
+/**
+ *public class StartFrame extends Frame
+ * @author huong
+ */
+public class StartFrame extends Frame
 {
-    private JButton startButton, exitButton;
-    private JLabel label1;
-    private JPanel panel1;
-    private JFrame jframe1;
-    public mainFrame mFrame1;
-    
-    public StartFrame()
+    //Variables
+    private JPanel panel;
+    private JButton startButton;
+    private JButton exitButton;
+    private JLabel start_label;
+
+    private void setupPanel() 
+    {
+        panel = new JPanel(new FlowLayout());
+        start_label = new JLabel("GUI Assignment Quiz");
+      
+        panel.add(start_label);
+        panel.setBackground(Color.PINK);
+        panel.setPreferredSize(new Dimension(200, 40));
+    }//End setupPanel() 
+
+    /**
+     *public StartFrame() 
+     */
+    public StartFrame() 
     {
         startButton = new JButton("Start");
         exitButton = new JButton("Exit");
         
-        ButtonListener listener = new ButtonListener();
-        startButton.addActionListener(listener);
-        exitButton.addActionListener(listener);
-         jframe1 = new JFrame("panel");
+        startButton.addActionListener(new ActionListener() 
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                start();
+            }//End actionPerformed
+        });//End startButton.addActionListener
         
-        panel1 = new JPanel();
-        panel1.add(startButton);
-        panel1.add(exitButton);
-        panel1.setBackground(Color.PINK);
-        panel1.setPreferredSize(new Dimension(200, 40));
-        
-        jframe1.setTitle("Starting Frame");
-        jframe1.setSize(400,400);
-        jframe1.setResizable(false);
-        jframe1.setLocationRelativeTo(null);
-        jframe1.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        jframe1.setVisible(true);
-        
-        jframe1.add(panel1);
-    }//End StartFrame()
+        exitButton.addActionListener(new ActionListener() 
+        {
+            @Override
+            public void actionPerformed(ActionEvent e) 
+            {
+                exit();
+            }//End actionPerformed       
+        });//End exitButton.addActionListener
+
+        this.setupFrame();
+        this.setupPanel();
+
+        //Add button into Panel and Frame
+        panel.add(startButton);
+        panel.add(exitButton);
+        frame.add(panel);    
+    }//End StartFrame() 
     
-    private class ButtonListener implements 
-                                        ActionListener
+    /**
+     *public void start() 
+     */
+    public void start() 
     {
-        @Override
-        public void actionPerformed(ActionEvent e) 
-        {           
-            if(e.getSource() == startButton)
-            {
-                mFrame1 = new mainFrame();
-            }//End if
-            else if(e.getSource() == exitButton)
-            {
-                exitFrame eframe = new exitFrame();
-            }//End else if  
-        }//End actionPerformed
-    }//End ButtonListener
+        System.out.println("start");
+        MainFrame mframe = new MainFrame();
+        frame.dispose();
+    }//End start()
+
+    /**
+     *public void exit() 
+     */
+    public void exit() 
+    {
+        System.out.println("exit");
+        ExitFrame eframe = new ExitFrame();
+        frame.dispose();
+    }//End exit() 
 }//End StartFrame
